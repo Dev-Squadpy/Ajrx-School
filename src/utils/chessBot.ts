@@ -155,9 +155,9 @@ export class ChessBot {
       const moves = this.getAllPossibleMoves(newBoard, 'black');
       
       for (const move of moves) {
-        const eval = this.minimax(newBoard, move.from, move.to, depth - 1, false, alpha, beta);
-        maxEval = Math.max(maxEval, eval);
-        alpha = Math.max(alpha, eval);
+        const evaluation = this.minimax(newBoard, move.from, move.to, depth - 1, false, alpha, beta);
+        maxEval = Math.max(maxEval, evaluation);
+        alpha = Math.max(alpha, evaluation);
         if (beta <= alpha) break;
       }
       
@@ -167,9 +167,9 @@ export class ChessBot {
       const moves = this.getAllPossibleMoves(newBoard, 'white');
       
       for (const move of moves) {
-        const eval = this.minimax(newBoard, move.from, move.to, depth - 1, true, alpha, beta);
-        minEval = Math.min(minEval, eval);
-        beta = Math.min(beta, eval);
+        const evaluation = this.minimax(newBoard, move.from, move.to, depth - 1, true, alpha, beta);
+        minEval = Math.min(minEval, evaluation);
+        beta = Math.min(beta, evaluation);
         if (beta <= alpha) break;
       }
       
