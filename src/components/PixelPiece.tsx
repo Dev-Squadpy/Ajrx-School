@@ -26,125 +26,178 @@ const PixelPiece: React.FC<PixelPieceProps> = ({
 
   const getPixelArt = (piece: ChessPieceType): JSX.Element => {
     const isWhite = piece.color === 'white';
-    const baseColor = isWhite ? '#F5F5DC' : '#8B4513';
-    const shadowColor = isWhite ? '#D2B48C' : '#654321';
-    const highlightColor = isWhite ? '#FFFACD' : '#A0522D';
+    const primaryColor = isWhite ? '#F8F8FF' : '#2F2F2F';
+    const secondaryColor = isWhite ? '#E0E0E0' : '#1A1A1A';
+    const accentColor = isWhite ? '#FFD700' : '#8B4513';
+    const shadowColor = isWhite ? '#C0C0C0' : '#000000';
 
-    const pixelStyle = {
-      width: '2px',
-      height: '2px',
-      display: 'inline-block',
+    const pixelSize = '3px';
+    const gridSize = 12;
+
+    const createPixel = (color: string, key: number) => (
+      <div 
+        key={key} 
+        style={{
+          width: pixelSize,
+          height: pixelSize,
+          backgroundColor: color,
+          imageRendering: 'pixelated',
+        }} 
+      />
+    );
+
+    const createRow = (pattern: string[], rowIndex: number) => (
+      pattern.map((color, colIndex) => {
+        const key = rowIndex * gridSize + colIndex;
+        switch (color) {
+          case 'P': return createPixel(primaryColor, key);
+          case 'S': return createPixel(secondaryColor, key);
+          case 'A': return createPixel(accentColor, key);
+          case 'D': return createPixel(shadowColor, key);
+          case 'T': return createPixel('transparent', key);
+          default: return createPixel('transparent', key);
+        }
+      })
+    );
+
+    const containerStyle = {
+      display: 'grid',
+      gridTemplateColumns: `repeat(${gridSize}, ${pixelSize})`,
+      gap: '0px',
+      width: `${parseInt(pixelSize) * gridSize}px`,
+      height: `${parseInt(pixelSize) * gridSize}px`,
       imageRendering: 'pixelated' as const,
     };
 
     switch (piece.type) {
       case 'pawn':
+        const pawnPattern = [
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+          ['T','T','T','T','P','P','P','P','T','T','T','T'],
+          ['T','T','T','P','P','P','P','P','P','T','T','T'],
+          ['T','T','T','P','A','P','P','A','P','T','T','T'],
+          ['T','T','T','P','P','P','P','P','P','T','T','T'],
+          ['T','T','T','T','P','S','S','P','T','T','T','T'],
+          ['T','T','T','P','P','P','P','P','P','T','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','P','P','P','P','P','P','P','P','P','P','T'],
+          ['T','S','S','S','S','S','S','S','S','S','S','T'],
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+        ];
         return (
-          <div className="grid grid-cols-8 gap-0" style={{ width: '16px', height: '16px' }}>
-            {/* Row 1 */ Array(8).fill(0).map((_, i) => <div key={i} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {/* Row 2 */ Array(2).fill(0).map((_, i) => <div key={i+8} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(4).fill(0).map((_, i) => <div key={i+10} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+14} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {/* Row 3 */ Array(2).fill(0).map((_, i) => <div key={i+16} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(4).fill(0).map((_, i) => <div key={i+18} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+22} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {/* Row 4 */ Array(1).fill(0).map((_, i) => <div key={i+24} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(6).fill(0).map((_, i) => <div key={i+25} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(1).fill(0).map((_, i) => <div key={i+31} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {/* Row 5 */ Array(8).fill(0).map((_, i) => <div key={i+32} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {/* Row 6 */ Array(8).fill(0).map((_, i) => <div key={i+40} style={{...pixelStyle, backgroundColor: shadowColor}} />)}
+          <div style={containerStyle}>
+            {pawnPattern.map((row, index) => createRow(row, index))}
           </div>
         );
-      
+
       case 'rook':
+        const rookPattern = [
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+          ['T','P','P','T','P','P','T','P','P','T','P','P'],
+          ['T','P','P','P','P','P','P','P','P','P','P','T'],
+          ['T','P','A','P','P','P','P','P','P','A','P','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','T','P','P','P','S','S','P','P','P','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','P','P','P','P','P','P','P','P','P','P','T'],
+          ['T','P','P','P','P','P','P','P','P','P','P','T'],
+          ['T','S','S','S','S','S','S','S','S','S','S','T'],
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+        ];
         return (
-          <div className="grid grid-cols-8 gap-0" style={{ width: '16px', height: '16px' }}>
-            {/* Castle battlements pattern */}
-            {Array(8).fill(0).map((_, i) => <div key={i} style={{...pixelStyle, backgroundColor: i % 2 === 0 ? baseColor : 'transparent'}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+8} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+16} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(4).fill(0).map((_, i) => <div key={i+18} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+22} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+24} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(4).fill(0).map((_, i) => <div key={i+26} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+30} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+32} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+40} style={{...pixelStyle, backgroundColor: shadowColor}} />)}
+          <div style={containerStyle}>
+            {rookPattern.map((row, index) => createRow(row, index))}
           </div>
         );
 
       case 'knight':
+        const knightPattern = [
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+          ['T','T','T','P','P','P','P','T','T','T','T','T'],
+          ['T','T','P','P','A','P','P','P','T','T','T','T'],
+          ['T','T','P','A','P','P','P','P','P','T','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','T','P','P','S','P','P','S','P','P','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','T','T','P','P','P','P','P','P','T','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','P','P','P','P','P','P','P','P','P','P','T'],
+          ['T','S','S','S','S','S','S','S','S','S','S','T'],
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+        ];
         return (
-          <div className="grid grid-cols-8 gap-0" style={{ width: '16px', height: '16px' }}>
-            {/* Horse head pattern */}
-            {Array(3).fill(0).map((_, i) => <div key={i} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(3).fill(0).map((_, i) => <div key={i+3} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+6} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+8} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(4).fill(0).map((_, i) => <div key={i+10} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+14} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(1).fill(0).map((_, i) => <div key={i+16} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(6).fill(0).map((_, i) => <div key={i+17} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(1).fill(0).map((_, i) => <div key={i+23} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+24} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+32} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+40} style={{...pixelStyle, backgroundColor: shadowColor}} />)}
+          <div style={containerStyle}>
+            {knightPattern.map((row, index) => createRow(row, index))}
           </div>
         );
 
       case 'bishop':
+        const bishopPattern = [
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+          ['T','T','T','T','T','A','A','T','T','T','T','T'],
+          ['T','T','T','T','P','A','A','P','T','T','T','T'],
+          ['T','T','T','P','P','P','P','P','P','T','T','T'],
+          ['T','T','P','P','P','A','A','P','P','P','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','T','T','P','P','S','S','P','P','T','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','P','P','P','P','P','P','P','P','P','P','T'],
+          ['T','P','P','P','P','P','P','P','P','P','P','T'],
+          ['T','S','S','S','S','S','S','S','S','S','S','T'],
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+        ];
         return (
-          <div className="grid grid-cols-8 gap-0" style={{ width: '16px', height: '16px' }}>
-            {/* Bishop mitre pattern */}
-            {Array(3).fill(0).map((_, i) => <div key={i} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+3} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(3).fill(0).map((_, i) => <div key={i+5} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+8} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(4).fill(0).map((_, i) => <div key={i+10} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+14} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(1).fill(0).map((_, i) => <div key={i+16} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(6).fill(0).map((_, i) => <div key={i+17} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(1).fill(0).map((_, i) => <div key={i+23} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+24} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+32} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+40} style={{...pixelStyle, backgroundColor: shadowColor}} />)}
+          <div style={containerStyle}>
+            {bishopPattern.map((row, index) => createRow(row, index))}
           </div>
         );
 
       case 'queen':
+        const queenPattern = [
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+          ['T','A','T','A','T','A','A','T','A','T','A','T'],
+          ['T','A','A','A','A','A','A','A','A','A','A','T'],
+          ['T','T','P','P','P','A','A','P','P','P','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','T','P','A','P','P','P','P','A','P','T','T'],
+          ['T','T','P','P','P','S','S','P','P','P','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','P','P','P','P','P','P','P','P','P','P','T'],
+          ['T','P','P','P','P','P','P','P','P','P','P','T'],
+          ['T','S','S','S','S','S','S','S','S','S','S','T'],
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+        ];
         return (
-          <div className="grid grid-cols-8 gap-0" style={{ width: '16px', height: '16px' }}>
-            {/* Crown pattern */}
-            {Array(8).fill(0).map((_, i) => <div key={i} style={{...pixelStyle, backgroundColor: i % 2 === 1 ? baseColor : 'transparent'}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+8} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(1).fill(0).map((_, i) => <div key={i+16} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(6).fill(0).map((_, i) => <div key={i+17} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(1).fill(0).map((_, i) => <div key={i+23} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+24} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+32} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+40} style={{...pixelStyle, backgroundColor: shadowColor}} />)}
+          <div style={containerStyle}>
+            {queenPattern.map((row, index) => createRow(row, index))}
           </div>
         );
 
       case 'king':
+        const kingPattern = [
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+          ['T','T','T','T','T','A','A','T','T','T','T','T'],
+          ['T','T','T','A','A','A','A','A','A','T','T','T'],
+          ['T','A','A','A','A','A','A','A','A','A','A','T'],
+          ['T','T','P','P','P','A','A','P','P','P','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','T','P','A','P','S','S','P','A','P','T','T'],
+          ['T','T','P','P','P','P','P','P','P','P','T','T'],
+          ['T','P','P','P','P','P','P','P','P','P','P','T'],
+          ['T','P','P','P','P','P','P','P','P','P','P','T'],
+          ['T','S','S','S','S','S','S','S','S','S','S','T'],
+          ['T','T','T','T','T','T','T','T','T','T','T','T'],
+        ];
         return (
-          <div className="grid grid-cols-8 gap-0" style={{ width: '16px', height: '16px' }}>
-            {/* Cross crown pattern */}
-            {Array(3).fill(0).map((_, i) => <div key={i} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(2).fill(0).map((_, i) => <div key={i+3} style={{...pixelStyle, backgroundColor: highlightColor}} />)}
-            {Array(3).fill(0).map((_, i) => <div key={i+5} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+8} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(1).fill(0).map((_, i) => <div key={i+16} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(6).fill(0).map((_, i) => <div key={i+17} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(1).fill(0).map((_, i) => <div key={i+23} style={{...pixelStyle, backgroundColor: 'transparent'}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+24} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+32} style={{...pixelStyle, backgroundColor: baseColor}} />)}
-            {Array(8).fill(0).map((_, i) => <div key={i+40} style={{...pixelStyle, backgroundColor: shadowColor}} />)}
+          <div style={containerStyle}>
+            {kingPattern.map((row, index) => createRow(row, index))}
           </div>
         );
 
       default:
-        return <div style={{width: '16px', height: '16px', backgroundColor: baseColor}} />;
+        return <div style={{width: '36px', height: '36px', backgroundColor: primaryColor}} />;
     }
   };
 
@@ -153,15 +206,15 @@ const PixelPiece: React.FC<PixelPieceProps> = ({
     
     // Generate pixel fragments
     const colors = piece.color === 'white' 
-      ? ['#F5F5DC', '#D2B48C', '#FFFACD'] 
-      : ['#8B4513', '#654321', '#A0522D'];
+      ? ['#F8F8FF', '#E0E0E0', '#FFD700', '#C0C0C0'] 
+      : ['#2F2F2F', '#1A1A1A', '#8B4513', '#000000'];
     
-    const newFragments = Array.from({ length: 12 }, (_, i) => ({
+    const newFragments = Array.from({ length: 16 }, (_, i) => ({
       id: i,
-      x: (Math.random() - 0.5) * 150,
-      y: (Math.random() - 0.5) * 150,
+      x: (Math.random() - 0.5) * 200,
+      y: (Math.random() - 0.5) * 200,
       rotation: Math.random() * 360,
-      scale: 0.5 + Math.random() * 0.5,
+      scale: 0.3 + Math.random() * 0.7,
       color: colors[Math.floor(Math.random() * colors.length)]
     }));
     
@@ -185,7 +238,7 @@ const PixelPiece: React.FC<PixelPieceProps> = ({
         {fragments.map((fragment) => (
           <div
             key={fragment.id}
-            className="absolute w-1 h-1 transition-all duration-1000 ease-out"
+            className="absolute w-2 h-2 transition-all duration-1000 ease-out"
             style={{
               backgroundColor: fragment.color,
               transform: `translate(${fragment.x}px, ${fragment.y}px) rotate(${fragment.rotation}deg) scale(${fragment.scale})`,
@@ -197,8 +250,8 @@ const PixelPiece: React.FC<PixelPieceProps> = ({
         
         {/* Pixel explosion effect */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-8 h-8 bg-yellow-300 animate-ping opacity-75" style={{ imageRendering: 'pixelated' }}></div>
-          <div className="absolute w-6 h-6 bg-orange-400 animate-ping opacity-50" style={{ imageRendering: 'pixelated' }}></div>
+          <div className="w-12 h-12 bg-yellow-300 animate-ping opacity-75" style={{ imageRendering: 'pixelated' }}></div>
+          <div className="absolute w-8 h-8 bg-orange-400 animate-ping opacity-50" style={{ imageRendering: 'pixelated' }}></div>
           <div className="absolute w-4 h-4 bg-red-400 animate-ping opacity-25" style={{ imageRendering: 'pixelated' }}></div>
         </div>
       </div>
@@ -211,8 +264,12 @@ const PixelPiece: React.FC<PixelPieceProps> = ({
         transition-all duration-200 ease-in-out transform
         ${isSelected ? 'scale-125 animate-bounce' : 'hover:scale-110'}
         cursor-pointer active:scale-95
+        ${isSelected ? 'drop-shadow-lg' : ''}
       `}
-      style={{ imageRendering: 'pixelated' }}
+      style={{ 
+        imageRendering: 'pixelated',
+        filter: isSelected ? 'brightness(1.2) contrast(1.1)' : 'none'
+      }}
     >
       {getPixelArt(piece)}
     </div>
